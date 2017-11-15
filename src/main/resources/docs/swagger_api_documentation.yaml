@@ -1,0 +1,302 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Avenue Code Test
+  description: API created to Avenue Code Test
+  version: "1.0.0"
+# the domain of the service
+host: localhost:8080
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /api/rest
+produces:
+  - application/json
+paths:
+  /products:
+    get:
+      summary: Products List
+      description: |
+        The Products endpoint returns information about the *API* products.
+      parameters:
+        - name: childs
+          in: query
+          description: 'List the childs of products. Default: true'
+          default: true
+          required: false
+          type: boolean
+        - name: images
+          in: query
+          description: 'List the images of products. Default: true'
+          default: true
+          required: false
+          type: boolean
+      tags:
+        - List
+      responses:
+        200:
+          description: An array of products
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductGET'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      summary: Create a Product
+      description: |
+        Create a new product on API.
+      parameters:
+        - name: product
+          in: body
+          description: Product Body.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductPOST'
+      tags:
+        - Create
+      responses:
+        200:
+          description: The product created
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductGET'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /products/{idProduct}:
+    get:
+      summary: Specific Product
+      description: |
+        The Products endpoint returns information about the *API* products.
+      parameters:
+        - name: idProduct
+          in: path
+          description: Product identifier
+          required: true
+          type: number
+          format: integer
+        - name: childs
+          in: query
+          description: 'List the childs of products.  Default: true'
+          required: false
+          default: true
+          type: boolean
+        - name: images
+          in: query
+          description: 'List the images of products.  Default: true'
+          required: false
+          default: true
+          type: boolean
+      tags:
+        - List
+      responses:
+        200:
+          description: An specific product
+          schema:
+              $ref: '#/definitions/ProductGET'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      summary: Update a Product
+      description: |
+        Update an exist product on API.
+      parameters:
+        - name: idProduct
+          in: path
+          description: Product identifier
+          required: true
+          type: number
+          format: integer
+        - name: product
+          in: body
+          description: Product Body.
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductPOST'
+      tags:
+        - Update
+      responses:
+        200:
+          description: The product updated
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ProductGET'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      summary: Delete a Product
+      description: |
+        Delete an exist product on API.
+      parameters:
+        - name: idProduct
+          in: path
+          description: Product identifier
+          required: true
+          type: number
+          format: integer
+      tags:
+        - Delete
+      responses:
+        200:
+          description: Success
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /products/{idProduct}/childs:
+    get:
+      summary: Product Child List
+      description: |
+        Get the list of childs of a specific product.
+      parameters:
+        - name: idProduct
+          in: path
+          description: Product identifier
+          required: true
+          type: number
+          format: integer
+      tags:
+        - List
+      responses:
+        200:
+          description: List of childs specific product
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Child'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /products/{idProduct}/images:
+    get:
+      summary: Product Image List
+      description: |
+        Get the list of images of a specific product.
+      parameters:
+        - name: idProduct
+          in: path
+          description: Product identifier
+          required: true
+          type: number
+          format: integer
+      tags:
+        - List
+      responses:
+        200:
+          description: List of images specific product
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Image'
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  ProductPOST:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Description of product.
+      description:
+        type: string
+        description: Description of product.
+      parent:
+        type: number
+        format: long
+        description: Unique identifier representing the parent.
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/Image'
+  ProductGET:
+    type: object
+    properties:
+      id:
+        type: number
+        format: long
+        description: Unique identifier representing a specific product.
+      name:
+        type: string
+        description: Description of product.
+      description:
+        type: string
+        description: Description of product.
+      parent:
+        $ref: '#/definitions/ProductSimple'
+      childs:
+        type: array
+        items:
+          $ref: '#/definitions/ProductSimple'
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/Image'
+  ProductSimple:
+    type: object
+    properties:
+      id:
+        type: number
+        format: long
+        description: Unique identifier representing a specific product.
+      name:
+        type: string
+        description: Description of product.
+      description:
+        type: string
+        description: Description of product.
+  Child:
+    type: object
+    properties:
+      id:
+        type: number
+        format: long
+        description: Unique identifier representing a specific product.
+      name:
+        type: string
+        description: Description of product.
+      description:
+        type: string
+        description: Description of product.
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/Image'
+  Image:
+    type: object
+    properties:
+      id:
+        type: number
+        format: long
+        description: 'Unique identifier representing a specific image. If null, it will create another image register.'
+      type:
+        type: string
+        description: 'Options: BPM. GIF, JPG, JPEG, PNG'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: 'Values: INVALID_PARAMETER, INVALID_FIELD, NOT_FOUND, INTEGRITY_VIOLATION'
+      message:
+        type: string
+      fields:
+        type: string
